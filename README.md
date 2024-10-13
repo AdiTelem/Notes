@@ -15,4 +15,6 @@ they also have access to a button leading to a new note creation, or editing an 
 Deletion may be done by a long press, followed by a confirmation screen.
 
 ### Deliverable
-The deliverable is a copy of an Android Studio Project directory, which holds the codes Kotlin files, updated manifest and gradle files.
+* The deliverable is a copy of an Android Studio Project directory, which holds the codes Kotlin files, updated manifest and gradle files.
+* Use Android Studios' "Get From Version Control" feature to pull the project and automatically set environment specific config files
+* Run the project through the emulator/connected device
