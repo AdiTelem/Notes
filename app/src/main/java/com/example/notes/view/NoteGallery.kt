@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import com.example.notes.R
 import com.example.notes.ui.theme.NoteTitleOrange
 import com.example.notes.viewmodel.NoteGalleryViewModel
