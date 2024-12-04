@@ -14,7 +14,7 @@ fun NotesAppNavigation() {
 
     NavHost(navController = navController, startDestination = "noteGallery") {
         composable("noteGallery") {
-            val notesListViewModel = NoteGalleryViewModel(navController) // Retrieve ViewModel
+            val notesListViewModel = NoteGalleryViewModel(navController, LocalContext.current) // Retrieve ViewModel
             NoteGallery(notesListViewModel)
         }
 

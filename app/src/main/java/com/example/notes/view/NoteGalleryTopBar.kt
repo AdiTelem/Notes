@@ -28,13 +28,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.notes.R
+import com.example.notes.model.SortOptions
 import com.example.notes.ui.theme.NoteTitleOrange
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesGalleryTopBar(
-    onSortOptions: (String) -> Unit,
+    onSortOptions: (SortOptions) -> Unit,
     onSearchRequest: (String) -> Unit
 ) {
     var showSortMenu by remember { mutableStateOf(false) }
@@ -106,21 +107,21 @@ fun NotesGalleryTopBar(
                     DropdownMenuItem(
                         text = { Text("By Oldest") },
                         onClick = {
-                            onSortOptions("date_ascend")
+                            onSortOptions(SortOptions.DATE_ASCEND)
                             showSortMenu = false
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("By Newest") },
                         onClick = {
-                            onSortOptions("date_descend")
+                            onSortOptions(SortOptions.DATE_DESCEND)
                             showSortMenu = false
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("By ABC") },
                         onClick = {
-                            onSortOptions("abc_ascend")
+                            onSortOptions(SortOptions.ABC)
                             showSortMenu = false
                         }
                     )

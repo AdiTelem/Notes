@@ -1,5 +1,9 @@
 package com.example.notes.view
 
+import android.Manifest
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -21,14 +25,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import com.example.notes.R
 import com.example.notes.ui.theme.NoteTitleOrange
 import com.example.notes.viewmodel.NoteGalleryViewModel
 
 @Composable
-fun NoteGallery(nGVM: NoteGalleryViewModel) {
+fun NoteGallery(
+    nGVM: NoteGalleryViewModel
+) {
     val context = LocalContext.current
     val presentedList = nGVM.getNotesList(context)
+    val askPermLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("Permissions", "Permission granted")
+            } else {
+                Log.d("Permissions", "Permission denied")
+            }
+        }
 
     Scaffold (
             modifier = Modifier.statusBarsPadding(),
@@ -38,8 +53,10 @@ fun NoteGallery(nGVM: NoteGalleryViewModel) {
                             search -> nGVM.setSearch(search)
                         })
                },
-              floatingActionButton = { AddNoteButton {
-                  nGVM.createNewNote()
+              floatingActionButton = {
+                  AddNoteButton {
+                      askPermLauncher.launch(Manifest.permission.READ_CONTACTS)
+                        nGVM.createNewNote()
               } }) {
         paddingValues ->
         NotesList(presentedList, { noteData ->
