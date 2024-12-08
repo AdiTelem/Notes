@@ -3,4 +3,6 @@
     <string name="pencil">pencil</string>
     <string name="sort_options">sort_options</string>
     <string name="search">search</string>
+    <string name="shared_pref_gallery">shared_pref_gallery</string>
+    <string name="shared_pref_notes">shared_pref_notes</string>
 </resources>

@@ -18,6 +18,9 @@ interface RetrofitInterface {
     @GET("notes/{id}")
     fun getNoteByID(@Path("id") noteID: Int): Call<NoteData>
 
+    @GET("notes")
+    fun getAllNote(): Call<List<NoteData> >
+
     @POST("notes")
     fun createNote(@Body noteData: NoteData): Call<NoteData>
 
