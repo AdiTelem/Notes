@@ -1,10 +1,5 @@
 package com.example.notes.model
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,14 +52,6 @@ class NotesRemoteDBHelper {
                     onFailure()
                 }
             })
-        }
-
-
-        fun updateRemote(notes: MutableList<NoteData>, actionCounter: Long) {
-
-//            notes.forEach {
-//                insertNote(it)
-//            }
         }
     }
 }

@@ -3,7 +3,6 @@ package com.example.notes.model
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import com.example.notes.R
 
@@ -18,7 +17,8 @@ class NotesManager() {
     fun readAllNotes(context: Context) {
         NotesRemoteDBHelper.readAllNote( { response ->
             if (response.isSuccessful) {
-                noteList.addAll(response.body()?.toMutableStateList() ?: mutableStateListOf<NoteData>())
+                val resultList = response.body()?.toMutableStateList() ?: mutableStateListOf<NoteData>()
+                noteList.addAll(resultList)
                 Log.d("remote_db", "server response success on read all\nmessage ${response.message()}")
             } else {
                 Log.d("remote_db", "server response ${response.code()} on read all")
@@ -38,8 +38,10 @@ class NotesManager() {
         val newCounter: Int = (sharedPref.getInt(COUNTER_KEY, 0)) + 1
 
         noteData.id = newCounter
-        NotesRemoteDBHelper.insertNote(noteData,
-            { code ->
+        NotesRemoteDBHelper.insertNote(
+            noteData = noteData,
+            onResponse = {
+                code ->
                 if (code == 200) {
                     sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
                     noteList.add(noteData)
@@ -48,15 +50,17 @@ class NotesManager() {
                     Log.d("remote_db", "server response $code on insert")
                 }
 
-            }, {
+            },
+            onFailure = {
                 Log.d("remote_db", "server failure on insert")
             })
     }
 
         fun deleteNote(noteID: Int, context: Context) {
             NotesRemoteDBHelper.removeNote(
-                noteID,
-                { code ->
+                noteID = noteID,
+                onResponse = {
+                    code ->
                     if (code == 200) {
                         noteList.removeIf { it.id == noteID }
                         Log.d("remote_db", "server response success on delete")
@@ -64,16 +68,18 @@ class NotesManager() {
                         Log.d("remote_db", "server response $code on delete")
                     }
 
-                }, {
+                },
+                onFailure = {
                     Log.d("remote_db", "server failure on delete")
                 })
         }
 
 
-        fun updateNote(noteData: NoteData, context: Context) {
+        fun updateNote(noteData: NoteData) {
                 NotesRemoteDBHelper.updateNote(
-                    noteData,
-                    { code ->
+                    noteData = noteData,
+                    onResponse = {
+                        code ->
                         if (code == 200) {
                             noteList.removeIf { it.id == noteData.id }
                             noteList.add(noteData)
@@ -82,14 +88,10 @@ class NotesManager() {
                             Log.d("remote_db", "server response $code on update")
                         }
 
-                    }, {
+                    },
+                    onFailure = {
                         Log.d("remote_db", "server failure on update")
-                    })
+                    }
+                )
         }
-//
-//
-//        fun readOneNote(context: Context, noteID: Int): NoteData {
-////            return NotesLocalDBHelper(context).readOneNote(noteID)
-//        }
-
 }
