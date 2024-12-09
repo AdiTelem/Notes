@@ -3,26 +3,24 @@ package com.example.notes.viewmodel
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.NoteManager
+import com.example.notes.model.NotesManager
 import com.example.notes.model.SortOptions
 
 class NoteGalleryViewModel(
     private var navController: NavController,
+    private var notesManager: NotesManager,
     context: Context
 ): ViewModel() {
 
     companion object {
         private const val SORT_KEY = "sort"
     }
-
-    private var notes = mutableStateListOf<NoteData>()
-    private var isInit = false
 
     private var showDeleteDialog = mutableStateOf(false)
     private var deleteRequestNoteID = 0
@@ -32,22 +30,18 @@ class NoteGalleryViewModel(
     private var search = mutableStateOf("")
 
     init {
-        sharedPref =  context.getSharedPreferences("GalleryPref", Context.MODE_PRIVATE)
+        sharedPref =  context.getSharedPreferences(context.getString(R.string.shared_pref_gallery), Context.MODE_PRIVATE)
 
         sort.value = SortOptions.valueOf(
                     sharedPref.getString(SORT_KEY, SortOptions.DATE_ASCEND.name) ?:
                         SortOptions.DATE_ASCEND.name
         )
-    }
+    } //get notes
 
     //retrieves a filtered sorted list of notes
     fun getNotesList(context: Context): List<NoteData> {
         Log.v("SharedPref", "${sort.value} used")
-        if (!isInit) {
-            notes = NoteManager.readAllNotes(context).toMutableStateList()
-            isInit = true
-        }
-        val updatedList: MutableList<NoteData> = notes.toMutableList()
+        val updatedList: MutableList<NoteData> = notesManager.noteList.toMutableList()
 
         //remove counter
         updatedList.removeIf { it.id == 0 }
@@ -75,8 +69,7 @@ class NoteGalleryViewModel(
     }
 
     fun deleteConfirmed(context: Context) {
-        notes.removeIf { it.id == deleteRequestNoteID }
-        NoteManager.deleteNote(deleteRequestNoteID, context)
+        notesManager.deleteNote(deleteRequestNoteID, context)
         showDeleteDialog.value = false
     }
 
