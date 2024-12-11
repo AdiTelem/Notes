@@ -28,7 +28,7 @@ class EditScreenViewModel(
             if (noteID == 0) {
                 notesManager.createNote(NoteData(title.value, content.value, noteID), context)
             } else {
-                notesManager.updateNote(NoteData(title.value, content.value, noteID), context)
+                notesManager.updateNote(NoteData(title.value, content.value, noteID))
             }
         }
 

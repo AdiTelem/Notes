@@ -22,10 +22,10 @@ interface RetrofitInterface {
     fun getAllNote(): Call<List<NoteData> >
 
     @POST("notes")
-    fun createNote(@Body noteData: NoteData): Call<NoteData>
+    fun createNote(@Body noteData: NoteData): Call<Void>
 
     @PUT("notes/{id}")
-    fun updateNote(@Path("id") noteID: Int, @Body noteData: NoteData): Call<NoteData>
+    fun updateNote(@Path("id") noteID: Int, @Body noteData: NoteData): Call<Void>
 
     @DELETE("notes/{id}")
     fun deleteNote(@Path("id") noteID: Int): Call<Void>
