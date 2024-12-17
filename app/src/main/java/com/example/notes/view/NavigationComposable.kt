@@ -5,18 +5,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.notes.model.NoteRepository
 import com.example.notes.viewmodel.EditScreenViewModel
 import com.example.notes.viewmodel.NavigationViewModel
 import com.example.notes.viewmodel.NoteGalleryViewModel
 
 @Composable
-fun NotesAppNavigation() {
+fun NotesAppNavigation(nVM: NavigationViewModel) {
     val navController = rememberNavController()
-    var nVM = NavigationViewModel(LocalContext.current)
 
     NavHost(navController = navController, startDestination = "noteGallery") {
         composable("noteGallery") {
-            val notesListViewModel = NoteGalleryViewModel(navController, nVM.notes, LocalContext.current) // Retrieve ViewModel
+            val notesListViewModel = NoteGalleryViewModel(navController, nVM, LocalContext.current) // Retrieve ViewModel
             NoteGallery(notesListViewModel)
         }
 
@@ -24,7 +24,7 @@ fun NotesAppNavigation() {
             val noteID = backStackEntry.arguments?.getString("noteID")?.toIntOrNull()
 
             if (noteID != null) {
-                val editScreenViewModel = EditScreenViewModel(navController, nVM.notes, noteID)
+                val editScreenViewModel = EditScreenViewModel(navController, nVM, noteID)
                 EditScreen(editScreenViewModel)
             } else {
                 throw IllegalStateException("note to edit not found")

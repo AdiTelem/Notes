@@ -4,15 +4,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NotesRemoteDBHelper {
+class NotesRetrofitHelper {
     companion object {
-        fun insertNote(noteData: NoteData, onResponse: (code: Int) -> Unit, onFailure: () -> Unit) {
-            RetrofitInterface.instance.createNote(noteData).enqueue(object : Callback<NoteData> {
-                override fun onResponse(call: Call<NoteData>, response: Response<NoteData>) {
-                    onResponse(response.code())
+        fun insertNote(noteData: NoteData, onResponse: (response: Response<Void>) -> Unit, onFailure: () -> Unit) {
+            RetrofitInterface.instance.createNote(noteData).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    onResponse(response)
                 }
 
-                override fun onFailure(call: Call<NoteData>, t: Throwable) {
+                override fun onFailure(call: Call<Void>, t: Throwable) {
                     onFailure()
                 }
             })
@@ -30,10 +30,10 @@ class NotesRemoteDBHelper {
             })
         }
 
-        fun removeNote(noteID: Int, onResponse: (code: Int) -> Unit, onFailure: () -> Unit) {
+        fun removeNote(noteID: Int, onResponse: (response: Response<Void>) -> Unit, onFailure: () -> Unit) {
             RetrofitInterface.instance.deleteNote(noteID).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    onResponse(response.code())
+                    onResponse(response)
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -42,13 +42,13 @@ class NotesRemoteDBHelper {
             })
         }
 
-        fun updateNote(noteData: NoteData, onResponse: (code: Int) -> Unit, onFailure: () -> Unit) {
-            RetrofitInterface.instance.updateNote(noteData.id, noteData).enqueue(object : Callback<NoteData> {
-                override fun onResponse(call: Call<NoteData>, response: Response<NoteData>) {
-                    onResponse(response.code())
+        fun updateNote(noteData: NoteData, onResponse: (response: Response<Void>) -> Unit, onFailure: () -> Unit) {
+            RetrofitInterface.instance.updateNote(noteData.id, noteData).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    onResponse(response)
                 }
 
-                override fun onFailure(call: Call<NoteData>, t: Throwable) {
+                override fun onFailure(call: Call<Void>, t: Throwable) {
                     onFailure()
                 }
             })

@@ -4,17 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.NotesManager
 import com.example.notes.model.SortOptions
 
 class NoteGalleryViewModel(
     private var navController: NavController,
-    private var notesManager: NotesManager,
+    private var notesManager: NavigationViewModel,
     context: Context
 ): ViewModel() {
 

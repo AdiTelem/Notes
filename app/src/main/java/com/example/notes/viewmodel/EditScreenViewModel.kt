@@ -10,7 +10,7 @@ import com.example.notes.model.NotesManager
 
 class EditScreenViewModel(
     private var navController: NavController,
-    private var notesManager: NotesManager,
+    private var notesManager: NavigationViewModel,
     private val noteID: Int
 ) : ViewModel() {
 
@@ -28,7 +28,7 @@ class EditScreenViewModel(
             if (noteID == 0) {
                 notesManager.createNote(NoteData(title.value, content.value, noteID), context)
             } else {
-                notesManager.updateNote(NoteData(title.value, content.value, noteID), context)
+                notesManager.updateNote(NoteData(title.value, content.value, noteID))
             }
         }
 
