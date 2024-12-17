@@ -5,11 +5,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import com.example.notes.WebService
 
-class NoteRepositoryWithService (
+class NoteRepositoryWithService: NoteRepository {
     private var service: WebService? = null
-): NoteRepository {
 
-    override fun insertNote(noteData: NoteData, callback: (status: Boolean) -> Unit) {
+    fun setService(webService: WebService) {
+        service = webService
+    }
+
+    override fun insertNote(noteData: NoteData, callback: (status: Boolean) -> Unit): Boolean {
         service?.insertNote (
             noteData = noteData,
             onResponse = {
@@ -26,10 +29,11 @@ class NoteRepositoryWithService (
                 callback(false)
                 Log.d("repository_callbacks", "server failure on insert")
             }
-        )
+        ) ?: return false
+        return true
     }
 
-    override fun readAllNote(callback: (notes: List<NoteData>) -> Unit) {
+    override fun readAllNote(callback: (notes: List<NoteData>) -> Unit): Boolean {
         service?.readAllNote ({ response ->
             if (response.isSuccessful) {
                 val resultList = response.body()?.toMutableStateList() ?: mutableStateListOf<NoteData>()
@@ -41,10 +45,11 @@ class NoteRepositoryWithService (
 
         }, {
             Log.d("repository_callbacks", "server failure on read all")
-        })
+        }) ?: return false
+        return true
     }
 
-    override fun removeNote(noteID: Int, callback: (status: Boolean) -> Unit) {
+    override fun removeNote(noteID: Int, callback: (status: Boolean) -> Unit): Boolean {
         service?.removeNote (
             noteID = noteID,
             onResponse = {
@@ -61,10 +66,11 @@ class NoteRepositoryWithService (
                 callback(false)
                 Log.d("repository_callbacks", "server failure on remove")
             }
-        )
+        ) ?: return false
+        return true
     }
 
-    override fun updateNote(noteData: NoteData, callback: (status: Boolean) -> Unit) {
+    override fun updateNote(noteData: NoteData, callback: (status: Boolean) -> Unit): Boolean {
         service?.updateNote (
             noteData = noteData,
             onResponse = {
@@ -81,6 +87,7 @@ class NoteRepositoryWithService (
                 callback(false)
                 Log.d("repository_callbacks", "server failure on update")
             }
-        )
+        ) ?: return false
+        return true
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import com.example.notes.R
 
+//delete
 class NotesManager(var repository: NoteRepository) {
 
     var noteList = mutableStateListOf<NoteData>()

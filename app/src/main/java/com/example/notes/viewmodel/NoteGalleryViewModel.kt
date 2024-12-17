@@ -14,7 +14,7 @@ import com.example.notes.model.SortOptions
 
 class NoteGalleryViewModel(
     private var navController: NavController,
-    private var notesManager: NotesManager,
+    private var nVM: NavigationViewModel,
     context: Context
 ): ViewModel() {
 
@@ -41,7 +41,7 @@ class NoteGalleryViewModel(
     //retrieves a filtered sorted list of notes
     fun getNotesList(context: Context): List<NoteData> {
         Log.v("SharedPref", "${sort.value} used")
-        val updatedList: MutableList<NoteData> = notesManager.noteList.toMutableList()
+        val updatedList: MutableList<NoteData> = nVM.noteList.toMutableList()
 
         //remove counter
         updatedList.removeIf { it.id == 0 }
@@ -69,7 +69,7 @@ class NoteGalleryViewModel(
     }
 
     fun deleteConfirmed(context: Context) {
-        notesManager.deleteNote(deleteRequestNoteID, context)
+        nVM.deleteNote(deleteRequestNoteID, context)
         showDeleteDialog.value = false
     }
 

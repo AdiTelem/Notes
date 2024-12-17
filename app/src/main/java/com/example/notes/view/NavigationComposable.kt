@@ -11,13 +11,12 @@ import com.example.notes.viewmodel.NavigationViewModel
 import com.example.notes.viewmodel.NoteGalleryViewModel
 
 @Composable
-fun NotesAppNavigation(repository : NoteRepository) {
+fun NotesAppNavigation(nVM: NavigationViewModel) {
     val navController = rememberNavController()
-    var nVM = NavigationViewModel(LocalContext.current, repository)
 
     NavHost(navController = navController, startDestination = "noteGallery") {
         composable("noteGallery") {
-            val notesListViewModel = NoteGalleryViewModel(navController, nVM.notes, LocalContext.current) // Retrieve ViewModel
+            val notesListViewModel = NoteGalleryViewModel(navController, nVM, LocalContext.current) // Retrieve ViewModel
             NoteGallery(notesListViewModel)
         }
 
@@ -25,7 +24,7 @@ fun NotesAppNavigation(repository : NoteRepository) {
             val noteID = backStackEntry.arguments?.getString("noteID")?.toIntOrNull()
 
             if (noteID != null) {
-                val editScreenViewModel = EditScreenViewModel(navController, nVM.notes, noteID)
+                val editScreenViewModel = EditScreenViewModel(navController, nVM, noteID)
                 EditScreen(editScreenViewModel)
             } else {
                 throw IllegalStateException("note to edit not found")

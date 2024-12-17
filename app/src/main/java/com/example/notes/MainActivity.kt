@@ -10,28 +10,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.notes.model.NoteRepository
 import com.example.notes.model.NoteRepositoryWithService
 import com.example.notes.ui.theme.NotesTheme
 import com.example.notes.view.NotesAppNavigation
+import com.example.notes.viewmodel.NavigationViewModel
 
 class MainActivity : ComponentActivity() {
 
     private var service: WebService? = null
-    private var repository = mutableStateOf<NoteRepository>(NoteRepositoryWithService(null))
-
     private var bound = false
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, binder: IBinder) {
             val localBinder = binder as WebService.LocalBinder
             service = localBinder.getService()
-            repository.value = NoteRepositoryWithService(service)
-            bound = true
-            if (service == null) {
-                Log.d("service_debug", "service bind failed")
-            } else {
-                Log.d("service_debug", "service bind connected")
+            service?.let {
+                nonNullService ->
+                bound = true
+                val notesApplication = application as NotesApplication
+                val serviceRepository = notesApplication.container.noteRepository as NoteRepositoryWithService
+                serviceRepository.setService(nonNullService)
+                Log.d("service_debug", "service bind success")
             }
         }
 
@@ -47,7 +48,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesTheme {
-                NotesAppNavigation(repository.value)
+                var navigationViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory)
+                NotesAppNavigation(navigationViewModel)
             }
         }
         Log.d("", "Create")
