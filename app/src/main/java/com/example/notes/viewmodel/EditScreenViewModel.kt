@@ -10,7 +10,7 @@ import com.example.notes.model.NotesManager
 
 class EditScreenViewModel(
     private var navController: NavController,
-    private var nVM: NavigationViewModel,
+    private var notesManager: NavigationViewModel,
     private val noteID: Int
 ) : ViewModel() {
 
@@ -18,7 +18,7 @@ class EditScreenViewModel(
     var content = mutableStateOf("")
 
     init {
-        var editedNote = nVM.noteList.find {it.id == noteID} ?: NoteData("", "", 0)
+        var editedNote = notesManager.noteList.find {it.id == noteID} ?: NoteData("", "", 0)
         title.value = editedNote.title
         content.value = editedNote.content
     }
@@ -26,9 +26,9 @@ class EditScreenViewModel(
     fun submitNote(context: Context) {
         if (title.value.isNotBlank()) {
             if (noteID == 0) {
-                nVM.createNote(NoteData(title.value, content.value, noteID), context)
+                notesManager.createNote(NoteData(title.value, content.value, noteID), context)
             } else {
-                nVM.updateNote(NoteData(title.value, content.value, noteID))
+                notesManager.updateNote(NoteData(title.value, content.value, noteID))
             }
         }
 

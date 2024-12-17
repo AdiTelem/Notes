@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NotesRemoteDBHelper {
+class NotesRetrofitHelper {
     companion object {
         fun insertNote(noteData: NoteData, onResponse: (response: Response<Void>) -> Unit, onFailure: () -> Unit) {
             RetrofitInterface.instance.createNote(noteData).enqueue(object : Callback<Void> {

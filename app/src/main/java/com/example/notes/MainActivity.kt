@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesTheme {
-                var navigationViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory)
+                val navigationViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory)
                 NotesAppNavigation(navigationViewModel)
             }
         }

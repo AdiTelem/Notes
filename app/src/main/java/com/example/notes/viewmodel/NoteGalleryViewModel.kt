@@ -4,17 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.NotesManager
 import com.example.notes.model.SortOptions
 
 class NoteGalleryViewModel(
     private var navController: NavController,
-    private var nVM: NavigationViewModel,
+    private var notesManager: NavigationViewModel,
     context: Context
 ): ViewModel() {
 
@@ -41,7 +39,7 @@ class NoteGalleryViewModel(
     //retrieves a filtered sorted list of notes
     fun getNotesList(context: Context): List<NoteData> {
         Log.v("SharedPref", "${sort.value} used")
-        val updatedList: MutableList<NoteData> = nVM.noteList.toMutableList()
+        val updatedList: MutableList<NoteData> = notesManager.noteList.toMutableList()
 
         //remove counter
         updatedList.removeIf { it.id == 0 }
@@ -69,7 +67,7 @@ class NoteGalleryViewModel(
     }
 
     fun deleteConfirmed(context: Context) {
-        nVM.deleteNote(deleteRequestNoteID, context)
+        notesManager.deleteNote(deleteRequestNoteID, context)
         showDeleteDialog.value = false
     }
 

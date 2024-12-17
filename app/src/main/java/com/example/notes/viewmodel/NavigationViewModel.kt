@@ -13,7 +13,7 @@ import com.example.notes.model.NoteData
 import com.example.notes.model.NoteRepository
 import com.example.notes.model.NotesManager
 
-class NavigationViewModel(var repository: NoteRepository) :
+class NavigationViewModel(val repository: NoteRepository) :
     ViewModel() {
 
     var noteList = mutableStateListOf<NoteData>()
@@ -37,7 +37,7 @@ class NavigationViewModel(var repository: NoteRepository) :
 
     private fun initList() {
         if (!isInit) {
-            var success = readAllNotes()
+            val success = readAllNotes()
             isInit = success
         }
     }
@@ -48,7 +48,7 @@ class NavigationViewModel(var repository: NoteRepository) :
 
     fun createNote(noteData: NoteData, context: Context) {
         initList()
-        var sharedPref = context.getSharedPreferences(
+        val sharedPref = context.getSharedPreferences(
             context.getString(R.string.shared_pref_gallery),
             Context.MODE_PRIVATE
         )
