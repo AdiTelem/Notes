@@ -49,6 +49,26 @@ class NoteRepositoryWithService: NoteRepository {
         return true
     }
 
+    override fun readOneNote(noteID: Int, callback: (note: NoteData) -> Unit) : Boolean {
+        service?.readOneNote (
+            noteID = noteID,
+            onResponse = {
+                response ->
+                if (response.isSuccessful) {
+                    val resultNote = response.body() ?: NoteData("test", "test", 0)
+                    callback(resultNote)
+                    Log.d("repository_callbacks", "server response success on read one")
+                } else {
+                    Log.d("repository_callbacks", "server response ${response.code()} on read one")
+                }
+            },
+            onFailure = {
+            Log.d("repository_callbacks", "server failure on read one")
+            }
+        ) ?: return false
+        return true
+    }
+
     override fun removeNote(noteID: Int, callback: (status: Boolean) -> Unit): Boolean {
         service?.removeNote (
             noteID = noteID,
