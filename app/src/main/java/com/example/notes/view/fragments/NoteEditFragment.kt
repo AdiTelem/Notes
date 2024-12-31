@@ -3,19 +3,21 @@ package com.example.notes.view.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.notes.R
 import com.example.notes.viewmodel.fragments.NotesEditViewModel
 
 class NoteEditFragment : Fragment() {
-    private lateinit var viewModel: NotesEditViewModel
+    private val viewModel: NotesEditViewModel by viewModels { NotesEditViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,12 +28,6 @@ class NoteEditFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(
-            requireActivity(),
-            NotesEditViewModel.Factory
-        )[
-            NotesEditViewModel::class.java
-        ]
 
         // setup text listeners
         val titleEditText = view.findViewById<EditText>(R.id.titleEditText)
@@ -77,6 +73,6 @@ class NoteEditFragment : Fragment() {
         arguments?.getInt("note_id")?.let {
             viewModel.id = it
             viewModel.getNote()
-        }
+        } ?: viewModel.clearNote()
     }
 }

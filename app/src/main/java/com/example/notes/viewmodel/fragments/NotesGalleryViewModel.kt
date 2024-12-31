@@ -1,5 +1,6 @@
 package com.example.notes.viewmodel.fragments
 
+import android.provider.ContactsContract.CommonDataKinds.Note
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,10 @@ import com.example.notes.model.NoteRepository
 class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
     private val _notes = MutableLiveData<List<NoteData>>(mutableListOf())
     val notes: LiveData<List<NoteData>> = _notes
+
+    private val _selectNote = MutableLiveData<NoteData>()
+    private val _isDeleteDialogShown = MutableLiveData(false)
+    val isDeleteDialogShown = _isDeleteDialogShown
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -40,7 +45,20 @@ class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
         }
     }
 
+    fun deleteSelectedNote() {
+        deleteNote(_selectNote.value!!.id)
+    }
+
     fun onRefresh() {
         readAllNotes()
+    }
+
+    fun showDeleteDialog(selectedNote: NoteData) {
+        _selectNote.value = selectedNote
+        _isDeleteDialogShown.value = true
+    }
+
+    fun hideDeleteDialog() {
+        _isDeleteDialogShown.value = false
     }
 }

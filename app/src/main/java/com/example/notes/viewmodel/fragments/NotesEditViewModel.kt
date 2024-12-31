@@ -79,4 +79,10 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
             Log.d("debug update note", "called")
         }
     }
+
+    fun clearNote() {
+        title.value = ""
+        content.value = ""
+        id = 0
+    }
 }

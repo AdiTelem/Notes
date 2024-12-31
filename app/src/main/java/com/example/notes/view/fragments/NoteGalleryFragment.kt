@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
@@ -16,9 +17,12 @@ import com.example.notes.viewmodel.fragments.NotesGalleryViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.notes.model.NoteData
+import com.example.notes.viewmodel.fragments.NotesEditViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class NoteGalleryFragment : Fragment() {
-    private lateinit var viewModel: NotesGalleryViewModel
+    private val viewModel: NotesGalleryViewModel by viewModels { NotesGalleryViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,12 +33,11 @@ class NoteGalleryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(
-            requireActivity(),
-            NotesGalleryViewModel.Factory
-        )[
-            NotesGalleryViewModel::class.java
-        ]
+        viewModel.isDeleteDialogShown.value?.let {
+            if (it) {
+                showDeleteDialog()
+            }
+        }
 
         //recycler view
         val recyclerView = view.findViewById<RecyclerView>(R.id.noteList)
@@ -46,16 +49,8 @@ class NoteGalleryFragment : Fragment() {
                 findNavController().navigate(R.id.start_to_edit, bundle)
             },
             onNoteLongClick = { selectedNote ->
-                val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder
-                    .setMessage("Are you sure you want to delete ${selectedNote.title}")
-                    .setTitle("Delete")
-                    .setPositiveButton("Yes") { dialog, which ->
-                        viewModel.deleteNote(selectedNote.id)
-                    }
-                    .setNegativeButton("cancel") { dialog, which ->}
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
+                viewModel.showDeleteDialog(selectedNote)
+                showDeleteDialog()
             }
         )
         recyclerView.adapter = adapter
@@ -67,8 +62,8 @@ class NoteGalleryFragment : Fragment() {
             viewModel.onRefresh()
         }
 
-        val newNoteButton = view.findViewById<Button>(R.id.newNote)
-        newNoteButton.setOnClickListener {
+        val fAB = view.findViewById<FloatingActionButton>(R.id.fab)
+        fAB.setOnClickListener {
             findNavController().navigate(R.id.start_to_edit)
         }
 
@@ -77,11 +72,19 @@ class NoteGalleryFragment : Fragment() {
         }
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            Log.d("debug update note", "gallery view unhidden")
-            viewModel.readAllNotes()
-        }
+    private fun showDeleteDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder
+            .setMessage("Are you sure you want to delete this note")
+            .setTitle("Delete")
+            .setPositiveButton("Yes") { dialog, which ->
+                viewModel.deleteSelectedNote()
+                viewModel.hideDeleteDialog()
+            }
+            .setNegativeButton("cancel") { dialog, which ->
+                viewModel.hideDeleteDialog()
+            }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 }
