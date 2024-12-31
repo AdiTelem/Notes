@@ -6,21 +6,12 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.mutableStateOf
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.notes.model.NoteRepository
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.notes.model.NoteRepositoryWithService
-import com.example.notes.ui.theme.NotesTheme
-import com.example.notes.view.Fragments.NoteGalleryFragment
-import com.example.notes.view.NotesAppNavigation
-import com.example.notes.viewmodel.NavigationViewModel
+import com.example.notes.view.fragments.NoteGalleryFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,11 +42,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContainer, NoteGalleryFragment())
-                .commit()
-        }
         Log.d("", "Create")
     }
 

@@ -1,4 +1,4 @@
-package com.example.notes.view.Fragments
+package com.example.notes.view.fragments
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,10 +10,11 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.notes.R
-import com.example.notes.viewmodel.Fragments.NotesEditViewModel
+import com.example.notes.viewmodel.fragments.NotesEditViewModel
 
-class NoteEditFragment  : Fragment() {
+class NoteEditFragment : Fragment() {
     private lateinit var viewModel: NotesEditViewModel
 
     override fun onCreateView(
@@ -63,13 +64,13 @@ class NoteEditFragment  : Fragment() {
 
         val backButton = view.findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
 
         val doneButton = view.findViewById<Button>(R.id.doneButton)
         doneButton.setOnClickListener {
             viewModel.onSubmit()
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
 
         //setup edit

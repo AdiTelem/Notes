@@ -1,12 +1,10 @@
-package com.example.notes.viewmodel.Fragments
+package com.example.notes.viewmodel.fragments
 
 import android.app.Application
 import android.content.Context
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer

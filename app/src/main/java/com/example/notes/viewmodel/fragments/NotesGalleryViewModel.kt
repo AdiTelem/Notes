@@ -1,19 +1,15 @@
-package com.example.notes.viewmodel.Fragments
+package com.example.notes.viewmodel.fragments
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
 import com.example.notes.model.NoteData
 import com.example.notes.model.NoteRepository
-import com.example.notes.viewmodel.NavigationViewModel
 
 class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
     private val _notes = MutableLiveData<List<NoteData>>(mutableListOf())
