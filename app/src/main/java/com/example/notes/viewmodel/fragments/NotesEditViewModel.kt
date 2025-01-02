@@ -1,7 +1,6 @@
 package com.example.notes.viewmodel.fragments
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -10,9 +9,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
-import com.example.notes.R
 import com.example.notes.model.NoteData
 import com.example.notes.model.NoteRepository
+import com.example.notes.model.SharedPref
 
 class NotesEditViewModel (val repository: NoteRepository, private val application: NotesApplication) :
     AndroidViewModel(application = application) {
@@ -22,8 +21,6 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
     var id = 0
 
     companion object {
-        private const val COUNTER_KEY = "counter"
-
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
@@ -59,17 +56,12 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
 
     private fun createNote(noteData: NoteData) {
         val context = getApplication<Application>().applicationContext
-        val sharedPref = context.getSharedPreferences(
-            context.getString(R.string.shared_pref_gallery),
-            Context.MODE_PRIVATE
-        )
-
-        val newCounter: Int = (sharedPref.getInt(COUNTER_KEY, 0)) + 1
+        val newCounter: Int = SharedPref.getNoteCounter(context)
 
         noteData.id = newCounter
         repository.insertNote(noteData) { status ->
             if (status) {
-                sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
+                SharedPref.setNoteCounter(context, newCounter)
             }
         }
     }

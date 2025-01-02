@@ -17,6 +17,7 @@ import com.example.notes.viewmodel.fragments.NotesGalleryViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.notes.model.NoteAdapterCallbacks
 import com.example.notes.model.NoteData
 import com.example.notes.viewmodel.fragments.NotesEditViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,18 +42,17 @@ class NoteGalleryFragment : Fragment() {
 
         //recycler view
         val recyclerView = view.findViewById<RecyclerView>(R.id.noteList)
-        val adapter = NoteAdapter (
-            onNoteClick = { selectedNote ->
-
+        val adapter = NoteAdapter ( object : NoteAdapterCallbacks {
+            override val onNoteClick: (NoteData) -> Unit = { noteData ->
                 val bundle = Bundle()
-                bundle.putInt("note_id", selectedNote.id)
+                bundle.putInt("note_id", noteData.id)
                 findNavController().navigate(R.id.start_to_edit, bundle)
-            },
-            onNoteLongClick = { selectedNote ->
-                viewModel.showDeleteDialog(selectedNote)
+            }
+            override val onNoteLongClick: (NoteData) -> Unit = { noteData ->
+                viewModel.showDeleteDialog(noteData)
                 showDeleteDialog()
             }
-        )
+        })
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
 

@@ -9,9 +9,13 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 
+interface NoteAdapterCallbacks {
+    val onNoteClick: (NoteData) -> Unit
+    val onNoteLongClick: (NoteData) -> Unit
+}
+
 class NoteAdapter(
-    private val onNoteClick: (NoteData) -> Unit,
-    private val onNoteLongClick: (NoteData) -> Unit
+    private val adapterCallbacks: NoteAdapterCallbacks
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     private val notes = mutableListOf<NoteData>()
@@ -36,7 +40,7 @@ class NoteAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.note_entry, parent, false)
-        return NoteViewHolder(view, onNoteClick, onNoteLongClick)
+        return NoteViewHolder(view, adapterCallbacks.onNoteClick, adapterCallbacks.onNoteLongClick)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
