@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.SortOptions
+import com.example.notes.model.enums.SortOptions
 
 class NoteGalleryViewModel(
     private var navController: NavController,

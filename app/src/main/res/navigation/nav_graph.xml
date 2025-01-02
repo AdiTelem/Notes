@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/note_gallery">
+
+    <fragment
+        android:id="@+id/note_gallery"
+        android:name="com.example.notes.view.fragments.NoteGalleryFragment"
+        android:label="NoteGallery"
+        tools:layout="@layout/fragment_note_gallery">
+        <action
+            android:id="@+id/start_to_edit"
+            app:destination="@id/note_edit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/note_edit"
+        android:name="com.example.notes.view.fragments.NoteEditFragment"
+        android:label="NoteEdit"
+        tools:layout="@layout/fragment_note_edit" />
+
+</navigation>

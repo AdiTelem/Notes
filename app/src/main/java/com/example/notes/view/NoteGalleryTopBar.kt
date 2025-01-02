@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.notes.R
-import com.example.notes.model.SortOptions
+import com.example.notes.model.enums.SortOptions
 import com.example.notes.ui.theme.NoteTitleOrange
 
 
