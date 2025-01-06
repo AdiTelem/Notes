@@ -6,9 +6,12 @@ import com.example.notes.model.container.DefaultNotesAppContainer
 import com.example.notes.model.container.NotesAppContainer
 import com.example.notes.model.repository.rxjava.NoteRepositoryRXJRoom
 import com.example.notes.model.roomdb.NoteDB
+import com.example.notes.model.SharedPref
+import com.example.notes.model.enums.SystemUI
 
 class NotesApplication : Application() {
     lateinit var container: NotesAppContainer
+    lateinit var config: Configuration
 
     override fun onCreate() {
         super.onCreate()
@@ -23,5 +26,19 @@ class NotesApplication : Application() {
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             Log.e("AppCrash", "Unhandled exception", throwable)
         }
+
+        val systemUI = SharedPref.getSystemUI(applicationContext)
+        config = Configuration(
+            systemUI = systemUI
+        )
+    }
+
+    fun setSystemUI(systemUI: SystemUI) {
+        SharedPref.setSystemUI(applicationContext, systemUI)
+        config.systemUI = systemUI
     }
 }
+
+data class Configuration(
+    var systemUI : SystemUI
+)

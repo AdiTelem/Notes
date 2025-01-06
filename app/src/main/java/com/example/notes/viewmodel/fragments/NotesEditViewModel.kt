@@ -1,7 +1,6 @@
 package com.example.notes.viewmodel.fragments
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -10,12 +9,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
-import com.example.notes.R
 import com.example.notes.model.NoteData
 import com.example.notes.model.repository.rxjava.NoteRepositoryRXJ
-import com.example.notes.model.repository.service.NoteRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import com.example.notes.model.SharedPref
 
 class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val application: NotesApplication) :
     AndroidViewModel(application = application) {
@@ -27,8 +25,6 @@ class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val applica
     private val compositeDisposable = CompositeDisposable()
 
     companion object {
-        private const val COUNTER_KEY = "counter"
-
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
@@ -77,29 +73,18 @@ class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val applica
 
     private fun createNote(noteData: NoteData) {
         val context = getApplication<Application>().applicationContext
-        val sharedPref = context.getSharedPreferences(
-            context.getString(R.string.shared_pref_gallery),
-            Context.MODE_PRIVATE
-        )
 
-        val Counter: Int = (sharedPref.getInt(COUNTER_KEY, 0))
-        Log.d("EditVM", "$Counter")
-        val newCounter = Counter + 1
-        Log.d("EditVM", "$newCounter")
+        val newCounter = SharedPref.getNoteCounter(context) + 1
 
         noteData.id = newCounter
 
         val notesDisposable = repository.insertNote(noteData)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                    Log.d("EditVM", "hdfhdffg $newCounter")
-                    sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
-                },
-                { error ->
-                    Log.e("EditVM", error.message ?: "no message")
-                    sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
-                }
-            )
+            .subscribe {
+                Log.d("EditVM", "$newCounter")
+                SharedPref.setNoteCounter(context, newCounter)
+            }
+
         Thread.sleep(100)
 
         compositeDisposable.add(notesDisposable)
