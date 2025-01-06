@@ -71,8 +71,11 @@ class NoteEditFragment : Fragment() {
 
         //setup edit
         arguments?.getInt("note_id")?.let {
-            viewModel.id = it
-            viewModel.getNote()
-        } ?: viewModel.clearNote()
+            if (it == 0) {
+                viewModel.clearNote()
+            } else {
+                viewModel.getNote()
+            }
+        }
     }
 }

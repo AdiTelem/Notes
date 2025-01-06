@@ -12,14 +12,19 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
 import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.NoteRepository
+import com.example.notes.model.repository.rxjava.NoteRepositoryRXJ
+import com.example.notes.model.repository.service.NoteRepository
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-class NotesEditViewModel (val repository: NoteRepository, private val application: NotesApplication) :
+class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val application: NotesApplication) :
     AndroidViewModel(application = application) {
 
     val title = MutableLiveData("")
     val content = MutableLiveData("")
     var id = 0
+
+    private val compositeDisposable = CompositeDisposable()
 
     companion object {
         private const val COUNTER_KEY = "counter"
@@ -27,7 +32,7 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
-                val noteRepository = application.container.noteRepository
+                val noteRepository = application.container.noteRepositoryRXJ
                 NotesEditViewModel(repository = noteRepository, application = application)
             }
         }
@@ -38,18 +43,31 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
     }
 
     fun getNote() {
-        repository.readOneNote(id) {
-            noteData ->
-            title.value = noteData.title
-            content.value = noteData.content
-        }
+        val notesDisposable = repository.readOneNote(id) .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { note ->
+                    title.value = note.title
+                    content.value = note.content
+                },
+                { error ->
+                    Log.e("EditVM", error.message ?: "no message")
+                }
+            )
+
+        compositeDisposable.add(notesDisposable)
+    }
+
+    fun clearNote() {
+        title.value = ""
+        content.value = ""
+        id = 0
     }
 
     fun onSubmit() {
         title.value?.let {
             if (it.isNotEmpty()) {
                 if (id == 0) {
-                    createNote(NoteData(it, content.value ?: "", 0))
+                    createNote(NoteData(it, content.value ?: "", id))
                 } else {
                     updateNote(NoteData(it, content.value ?: "", id))
                 }
@@ -64,25 +82,46 @@ class NotesEditViewModel (val repository: NoteRepository, private val applicatio
             Context.MODE_PRIVATE
         )
 
-        val newCounter: Int = (sharedPref.getInt(COUNTER_KEY, 0)) + 1
+        val Counter: Int = (sharedPref.getInt(COUNTER_KEY, 0))
+        Log.d("EditVM", "$Counter")
+        val newCounter = Counter + 1
+        Log.d("EditVM", "$newCounter")
 
         noteData.id = newCounter
-        repository.insertNote(noteData) { status ->
-            if (status) {
-                sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
-            }
-        }
+
+        val notesDisposable = repository.insertNote(noteData)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                    Log.d("EditVM", "hdfhdffg $newCounter")
+                    sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
+                },
+                { error ->
+                    Log.e("EditVM", error.message ?: "no message")
+                    sharedPref.edit().putInt(COUNTER_KEY, newCounter).apply()
+                }
+            )
+        Thread.sleep(100)
+
+        compositeDisposable.add(notesDisposable)
     }
 
     private fun updateNote(noteData: NoteData) {
-        repository.updateNote(noteData) {
-            Log.d("debug update note", "called")
-        }
+        val notesDisposable = repository.updateNote(noteData)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("EditVM", "update note called")
+            },
+                { error ->
+                    Log.e("EditVM", error.message ?: "no message")
+                }
+            )
+
+        compositeDisposable.add(notesDisposable)
     }
 
-    fun clearNote() {
-        title.value = ""
-        content.value = ""
-        id = 0
+    // for rxjava disposables
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 }

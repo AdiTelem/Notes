@@ -10,8 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
 import com.example.notes.R
 import com.example.notes.model.NoteData
-import com.example.notes.model.NoteRepository
-import com.example.notes.model.NotesManager
+import com.example.notes.model.repository.service.NoteRepository
 
 class NavigationViewModel(val repository: NoteRepository) :
     ViewModel() {

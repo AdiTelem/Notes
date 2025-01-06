@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/note_title_orange"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <Button

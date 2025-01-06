@@ -1,12 +1,12 @@
 package com.example.notes.model
 
-class NoteData (val title: String,
-                val content: String,
-                var id: Int,
-                val createTime: Long = System.currentTimeMillis()
-) {
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-    override fun toString(): String {
-        return "Note(title=$title, content=$content, id=$id, creationTime=$createTime)"
-    }
-}
+@Entity(tableName = "notes")
+data class NoteData (
+    val title: String,
+    val content: String,
+    @PrimaryKey var id: Int,
+    val createTime: Long = System.currentTimeMillis()
+)

@@ -7,11 +7,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.example.notes.model.NoteRepositoryWithService
-import com.example.notes.view.fragments.NoteGalleryFragment
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.notes.model.repository.service.NoteRepositoryWithService
 
 class MainActivity : AppCompatActivity() {
 
