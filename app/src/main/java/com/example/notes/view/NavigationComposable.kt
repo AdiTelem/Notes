@@ -5,7 +5,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.notes.model.NoteRepository
 import com.example.notes.viewmodel.EditScreenViewModel
 import com.example.notes.viewmodel.NavigationViewModel
 import com.example.notes.viewmodel.NoteGalleryViewModel

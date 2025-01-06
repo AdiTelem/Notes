@@ -1,9 +1,12 @@
-package com.example.notes.model
+package com.example.notes.model.repository.service
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import com.example.notes.WebService
+import com.example.notes.model.NoteData
+
+// Deprecated after switching to RXJAVA API
 
 class NoteRepositoryWithService: NoteRepository {
     private var service: WebService? = null
@@ -46,6 +49,26 @@ class NoteRepositoryWithService: NoteRepository {
         }, {
             Log.d("repository_callbacks", "server failure on read all")
         }) ?: return false
+        return true
+    }
+
+    override fun readOneNote(noteID: Int, callback: (note: NoteData) -> Unit) : Boolean {
+        service?.readOneNote (
+            noteID = noteID,
+            onResponse = {
+                response ->
+                if (response.isSuccessful) {
+                    val resultNote = response.body() ?: NoteData("test", "test", 0)
+                    callback(resultNote)
+                    Log.d("repository_callbacks", "server response success on read one")
+                } else {
+                    Log.d("repository_callbacks", "server response ${response.code()} on read one")
+                }
+            },
+            onFailure = {
+            Log.d("repository_callbacks", "server failure on read one")
+            }
+        ) ?: return false
         return true
     }
 

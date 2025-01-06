@@ -8,7 +8,7 @@ interface RetrofitInterface {
     companion object {
         val instance: RetrofitInterface by lazy {
             Retrofit.Builder()
-                .baseUrl("https://ca41b124809ebd951953.free.beeceptor.com/api/")
+                .baseUrl("https://cabb1d1dd0f69787c459.free.beeceptor.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(RetrofitInterface::class.java)

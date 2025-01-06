@@ -30,6 +30,18 @@ class NotesRetrofitHelper {
             })
         }
 
+        fun readNote(noteID: Int, onResponse: (response: Response<NoteData>) -> Unit, onFailure: () -> Unit) {
+            RetrofitInterface.instance.getNoteByID(noteID).enqueue(object : Callback<NoteData>  {
+                override fun onResponse(call: Call<NoteData>, response: Response<NoteData>) {
+                    onResponse(response)
+                }
+
+                override fun onFailure(call: Call<NoteData>, t: Throwable) {
+                    onFailure()
+                }
+            })
+        }
+
         fun removeNote(noteID: Int, onResponse: (response: Response<Void>) -> Unit, onFailure: () -> Unit) {
             RetrofitInterface.instance.deleteNote(noteID).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

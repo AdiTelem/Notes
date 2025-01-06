@@ -6,18 +6,16 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.mutableStateOf
+import androidx.appcompat.app.AppCompatActivity
+import com.example.notes.model.repository.service.NoteRepositoryWithService
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.notes.model.NoteRepository
-import com.example.notes.model.NoteRepositoryWithService
+import com.example.notes.model.enums.SystemUI
 import com.example.notes.ui.theme.NotesTheme
 import com.example.notes.view.NotesAppNavigation
 import com.example.notes.viewmodel.NavigationViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private var service: WebService? = null
     private var bound = false
@@ -45,11 +43,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
-        setContent {
-            NotesTheme {
-                val navigationViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory)
-                NotesAppNavigation(navigationViewModel)
+        val app = application as NotesApplication
+        app.setSystemUI(SystemUI.FRAGMENTS)
+
+        val systemUI = app.config.systemUI
+        when (systemUI)
+        {
+            SystemUI.COMPOSE -> {
+                setContent {
+                    NotesTheme {
+                        val navigationViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory)
+                        NotesAppNavigation(navigationViewModel)
+                    }
+                }
+            }
+            SystemUI.FRAGMENTS -> {
+                setContentView(R.layout.activity_main)
             }
         }
         Log.d("", "Create")

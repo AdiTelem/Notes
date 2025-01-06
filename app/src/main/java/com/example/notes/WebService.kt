@@ -32,6 +32,13 @@ class WebService : Service() {
         )
     }
 
+    fun readOneNote(noteID: Int, onResponse: (response: Response<NoteData>) -> Unit, onFailure: () -> Unit) {
+        NotesRetrofitHelper.readNote(
+            noteID = noteID,
+            onResponse = onResponse,
+            onFailure = onFailure
+        )
+    }
 
     fun insertNote(
         noteData: NoteData,
