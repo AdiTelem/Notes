@@ -38,10 +38,11 @@ class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val applica
         title.value = ""
     }
 
-    fun getNote() {
-        val notesDisposable = repository.readOneNote(id) .observeOn(AndroidSchedulers.mainThread())
+    fun getNote(noteID: Int) {
+        val notesDisposable = repository.readOneNote(noteID) .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { note ->
+                    id = noteID
                     title.value = note.title
                     content.value = note.content
                 },

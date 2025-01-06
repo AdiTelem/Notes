@@ -74,7 +74,7 @@ class NoteEditFragment : Fragment() {
             if (it == 0) {
                 viewModel.clearNote()
             } else {
-                viewModel.getNote()
+                viewModel.getNote(it)
             }
         }
     }
