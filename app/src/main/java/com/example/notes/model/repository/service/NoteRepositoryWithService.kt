@@ -1,9 +1,12 @@
-package com.example.notes.model
+package com.example.notes.model.repository.service
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import com.example.notes.WebService
+import com.example.notes.model.NoteData
+
+// Deprecated after switching to RXJAVA API
 
 class NoteRepositoryWithService: NoteRepository {
     private var service: WebService? = null

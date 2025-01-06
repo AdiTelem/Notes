@@ -64,12 +64,16 @@ class NoteGalleryFragment : Fragment() {
 
         val fAB = view.findViewById<FloatingActionButton>(R.id.fab)
         fAB.setOnClickListener {
-            findNavController().navigate(R.id.start_to_edit)
+            val bundle = Bundle()
+            bundle.putInt("note_id", 0)
+            findNavController().navigate(R.id.start_to_edit, bundle)
         }
 
         viewModel.notes.observe(viewLifecycleOwner) { noteList ->
             adapter.submitList(noteList)
         }
+
+        viewModel.readAllNotes()
     }
 
     private fun showDeleteDialog() {

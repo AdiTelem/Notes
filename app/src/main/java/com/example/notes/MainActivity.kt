@@ -8,9 +8,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import com.example.notes.model.repository.service.NoteRepositoryWithService
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.notes.model.NoteRepositoryWithService
-import com.example.notes.model.SharedPref
 import com.example.notes.model.enums.SystemUI
 import com.example.notes.ui.theme.NotesTheme
 import com.example.notes.view.NotesAppNavigation

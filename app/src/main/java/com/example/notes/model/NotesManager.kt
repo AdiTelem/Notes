@@ -1,10 +1,9 @@
 package com.example.notes.model
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import com.example.notes.R
+import com.example.notes.model.repository.service.NoteRepository
 
 //delete
 class NotesManager(var repository: NoteRepository) {

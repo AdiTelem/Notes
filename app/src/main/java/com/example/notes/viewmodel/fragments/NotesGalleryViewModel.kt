@@ -1,6 +1,6 @@
 package com.example.notes.viewmodel.fragments
 
-import android.provider.ContactsContract.CommonDataKinds.Note
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,9 +10,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.NotesApplication
 import com.example.notes.model.NoteData
-import com.example.notes.model.NoteRepository
+import com.example.notes.model.repository.rxjava.NoteRepositoryRXJ
+import com.example.notes.model.repository.rxjava.NoteRepositoryRXJRoom
+import com.example.notes.model.repository.service.NoteRepository
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
-class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
+class NotesGalleryViewModel(val repository: NoteRepositoryRXJ): ViewModel() {
     private val _notes = MutableLiveData<List<NoteData>>(mutableListOf())
     val notes: LiveData<List<NoteData>> = _notes
 
@@ -20,33 +24,49 @@ class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
     private val _isDeleteDialogShown = MutableLiveData(false)
     val isDeleteDialogShown = _isDeleteDialogShown
 
+    private val compositeDisposable = CompositeDisposable()
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
-                val noteRepository = application.container.noteRepository
+                val noteRepository = application.container.noteRepositoryRXJ
                 NotesGalleryViewModel(repository = noteRepository)
             }
         }
     }
 
-    fun readAllNotes(): Boolean {
-        return repository.readAllNote { resultList -> _notes.value = resultList }
+    fun readAllNotes() {
+        val notesDisposable = repository.readAllNote()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                resultList -> _notes.value = resultList
+            }
+
+        compositeDisposable.add(notesDisposable)
     }
 
-    fun deleteNote(noteID: Int) {
-        repository.removeNote(noteID) {
-            status ->
-            if (status) {
-                val currentList = _notes.value.orEmpty().toMutableList()
-                currentList.removeIf { it.id == noteID }
-                _notes.value = currentList
-            }
-        }
+    private fun deleteNote(note: NoteData) {
+        val notesDisposable = repository.removeNote(note)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    val currentList = _notes.value.orEmpty().toMutableList()
+                    currentList.removeIf { it.id == note.id }
+                    _notes.value = currentList
+                },
+                { error ->
+                    Log.e("GalleryVM", error.message ?: "no message")
+                }
+            )
+
+        compositeDisposable.add(notesDisposable)
     }
 
     fun deleteSelectedNote() {
-        deleteNote(_selectNote.value!!.id)
+        _selectNote.value?.let {
+            deleteNote(it)
+        }
     }
 
     fun onRefresh() {
@@ -60,5 +80,11 @@ class NotesGalleryViewModel(val repository: NoteRepository): ViewModel() {
 
     fun hideDeleteDialog() {
         _isDeleteDialogShown.value = false
+    }
+
+    // for rxjava disposables
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 }
