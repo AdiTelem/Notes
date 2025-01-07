@@ -1,6 +1,8 @@
 package com.example.notes.viewmodel.fragments
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,8 +17,14 @@ import com.example.notes.model.repository.rxjava.NoteRepositoryRXJRoom
 import com.example.notes.model.repository.service.NoteRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import javax.inject.Inject
 
-class NotesGalleryViewModel(val repository: NoteRepositoryRXJ): ViewModel() {
+class NotesGalleryViewModel (application: NotesApplication) :
+    AndroidViewModel(application = application) {
+
+    @Inject
+    lateinit var repository: NoteRepositoryRXJ
+
     private val _notes = MutableLiveData<List<NoteData>>(mutableListOf())
     val notes: LiveData<List<NoteData>> = _notes
 
@@ -30,10 +38,13 @@ class NotesGalleryViewModel(val repository: NoteRepositoryRXJ): ViewModel() {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
-                val noteRepository = application.container.noteRepositoryRXJ
-                NotesGalleryViewModel(repository = noteRepository)
+                NotesGalleryViewModel(application = application)
             }
         }
+    }
+
+    init {
+        application.notesComponent.inject(this)
     }
 
     fun readAllNotes() {
