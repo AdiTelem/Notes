@@ -2,6 +2,9 @@ package com.example.notes
 
 import android.app.Application
 import android.util.Log
+import com.example.notes.daggerdi.DaggerNotesComponent
+import com.example.notes.daggerdi.NotesComponent
+import com.example.notes.daggerdi.NotesModule
 import com.example.notes.model.container.DefaultNotesAppContainer
 import com.example.notes.model.container.NotesAppContainer
 import com.example.notes.model.repository.rxjava.NoteRepositoryRXJRoom
@@ -13,15 +16,17 @@ class NotesApplication : Application() {
     lateinit var container: NotesAppContainer
     lateinit var config: Configuration
 
+    lateinit var notesComponent: NotesComponent
+        private set
+
     override fun onCreate() {
         super.onCreate()
+
+        notesComponent = DaggerNotesComponent.builder()
+            .notesModule(NotesModule(this))
+            .build()
+
         container = DefaultNotesAppContainer()
-
-        val instance = NoteDB.getInstance(applicationContext)
-        val dao = instance.noteDao()
-
-        val noteRepositoryRXJRoom = container.noteRepositoryRXJ as NoteRepositoryRXJRoom
-        noteRepositoryRXJRoom.setDao(dao)
 
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             Log.e("AppCrash", "Unhandled exception", throwable)

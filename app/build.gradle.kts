@@ -87,4 +87,7 @@ dependencies {
     implementation(libs.rxjava3.core)
     implementation(libs.rxandroid)
     implementation(libs.room.rxjava3)
+    implementation(libs.dagger.core)
+    ksp(libs.dagger.compiler)
+
 }

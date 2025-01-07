@@ -14,9 +14,13 @@ import com.example.notes.model.repository.rxjava.NoteRepositoryRXJ
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import com.example.notes.model.SharedPref
+import javax.inject.Inject
 
-class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val application: NotesApplication) :
+class NotesEditViewModel (application: NotesApplication) :
     AndroidViewModel(application = application) {
+
+    @Inject
+    lateinit var repository: NoteRepositoryRXJ
 
     val title = MutableLiveData("")
     val content = MutableLiveData("")
@@ -28,14 +32,13 @@ class NotesEditViewModel (val repository: NoteRepositoryRXJ, private val applica
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as NotesApplication)
-                val noteRepository = application.container.noteRepositoryRXJ
-                NotesEditViewModel(repository = noteRepository, application = application)
+                NotesEditViewModel(application = application)
             }
         }
     }
 
     init {
-        title.value = ""
+        application.notesComponent.inject(this)
     }
 
     fun getNote(noteID: Int) {

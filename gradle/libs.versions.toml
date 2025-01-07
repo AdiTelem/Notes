@@ -21,6 +21,7 @@ roomCompiler = "2.6.1"
 rxjava3 = "3.1.5"
 rxandroid = "3.0.0"
 ksp = "1.9.0-1.0.12"
+dagger = "2.54"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -67,6 +68,10 @@ rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = 
 
 # Room x RX
 room-rxjava3 = {group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
+
+# dagger
+dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

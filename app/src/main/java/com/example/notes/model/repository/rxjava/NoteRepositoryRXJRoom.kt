@@ -8,15 +8,13 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
 
-class NoteRepositoryRXJRoom: NoteRepositoryRXJ {
+class NoteRepositoryRXJRoom @Inject constructor(
+    private var _noteDao: NoteDao
+) : NoteRepositoryRXJ {
 
-    private lateinit var _noteDao: NoteDao
-
-    fun setDao(noteDao: NoteDao) {
-        _noteDao = noteDao
-    }
 
     override fun readAllNote(): Flowable<List<NoteData>> {
         Log.d("NotesDB", "read")
