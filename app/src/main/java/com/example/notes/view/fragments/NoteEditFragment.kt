@@ -13,11 +13,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.notes.NotesApplication
 import com.example.notes.R
-import com.example.notes.viewmodel.fragments.NotesEditViewModel
+import com.example.notes.viewmodel.mvi.NoteEditViewModel
+import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
 class NoteEditFragment : Fragment() {
-    private val viewModel: NotesEditViewModel by viewModels { NotesEditViewModel.Factory }
+
+    @Inject
+    lateinit var factory: NoteEditViewModel.Factory
+    private val viewModel: NoteEditViewModel by viewModels { factory }
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        this.activity?.let { (it.application as NotesApplication).notesComponent.inject(this) }
+        viewModel.action(NoteEditViewModel.Action.Setup.FetchNoteByID(arguments?.getInt("note_id") ?: 0))
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,54 +42,57 @@ class NoteEditFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        // setup text listeners
         val titleEditText = view.findViewById<EditText>(R.id.titleEditText)
-        viewModel.title.observe(viewLifecycleOwner) { newText ->
-            if (titleEditText.text.toString() != newText) {
-                titleEditText.setText(newText)
+        val contentEditText = view.findViewById<EditText>(R.id.contentEditText)
+
+        compositeDisposable.add(
+            viewModel.renderableStream
+                .subscribe { state ->
+                    if (titleEditText.text.toString() != state.data.noteData.title) {
+                        titleEditText.setText(state.data.noteData.title)
+                    }
+
+                    if (contentEditText.text.toString() != state.data.noteData.content) {
+                        contentEditText.setText(state.data.noteData.content)
+                    }
+                }
+        )
+
+        compositeDisposable.add(
+            viewModel.eventRelay.
+            subscribe { event ->
+                when (event) {
+                    is NoteEditViewModel.Event.ToGallery -> {
+                        findNavController().popBackStack()
+                    }
+                }
             }
-        }
+        )
+
         titleEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.title.value = s.toString()
-            }
+            override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.action(NoteEditViewModel.Action.TextChanged.Title(s.toString()))
+            }
         })
 
-        val contentEditText = view.findViewById<EditText>(R.id.contentEditText)
-        viewModel.content.observe(viewLifecycleOwner) { newText ->
-            if (contentEditText.text.toString() != newText) {
-                contentEditText.setText(newText)
-            }
-        }
         contentEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.content.value = s.toString()
-            }
+            override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.action(NoteEditViewModel.Action.TextChanged.Content(s.toString()))
+            }
         })
 
         val backButton = view.findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
-            findNavController().popBackStack()
+            viewModel.action(NoteEditViewModel.Action.Back)
         }
 
         val doneButton = view.findViewById<Button>(R.id.doneButton)
         doneButton.setOnClickListener {
-            viewModel.onSubmit()
-            findNavController().popBackStack()
-        }
-
-        //setup edit
-        arguments?.getInt("note_id")?.let {
-            if (it == 0) {
-                viewModel.clearNote()
-            } else {
-                viewModel.getNote(it)
-            }
+            viewModel.action(NoteEditViewModel.Action.Submission.DoneClicked)
         }
     }
 }

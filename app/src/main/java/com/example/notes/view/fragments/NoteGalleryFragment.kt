@@ -30,10 +30,10 @@ class NoteGalleryFragment : Fragment() {
 
     private val adapter = NoteAdapter( object : NoteAdapterCallbacks {
         override val onNoteClick: (NoteData) -> Unit = { noteData ->
-            viewModel.action(NoteGalleryViewModel.NoteGalleryAction.ToDetails.Edit(noteData.id))
+            viewModel.action(NoteGalleryViewModel.Action.ToDetails.Edit(noteData.id))
         }
         override val onNoteLongClick: (NoteData) -> Unit = { noteData ->
-                viewModel.action(NoteGalleryViewModel.NoteGalleryAction.DeleteNote.Select(noteData))
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Select(noteData))
         }
     })
 
@@ -70,12 +70,12 @@ class NoteGalleryFragment : Fragment() {
             viewModel.eventRelay.
             subscribe { event ->
                 when (event) {
-                    is NoteGalleryViewModel.NoteGalleryEvent.ToDetails.New -> {
+                    is NoteGalleryViewModel.Event.ToDetails.New -> {
                         val bundle = Bundle()
                         bundle.putInt("note_id", 0)
                         findNavController().navigate(R.id.start_to_edit, bundle)
                     }
-                    is NoteGalleryViewModel.NoteGalleryEvent.ToDetails.Edit -> {
+                    is NoteGalleryViewModel.Event.ToDetails.Edit -> {
                         val bundle = Bundle()
                         bundle.putInt("note_id", event.id)
                         findNavController().navigate(R.id.start_to_edit, bundle)
@@ -84,7 +84,7 @@ class NoteGalleryFragment : Fragment() {
             }
         )
 
-        viewModel.action(NoteGalleryViewModel.NoteGalleryAction.Sync)
+        viewModel.action(NoteGalleryViewModel.Action.SyncList)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,12 +96,12 @@ class NoteGalleryFragment : Fragment() {
         // buttons
         val refreshButton = view.findViewById<Button>(R.id.refresh_button)
         refreshButton.setOnClickListener {
-            viewModel.action(NoteGalleryViewModel.NoteGalleryAction.Sync)
+            viewModel.action(NoteGalleryViewModel.Action.SyncList)
         }
 
         val fAB = view.findViewById<FloatingActionButton>(R.id.fab)
         fAB.setOnClickListener {
-            viewModel.action(NoteGalleryViewModel.NoteGalleryAction.ToDetails.New)
+            viewModel.action(NoteGalleryViewModel.Action.ToDetails.New)
         }
     }
 
@@ -113,15 +113,16 @@ class NoteGalleryFragment : Fragment() {
     }
 
     private fun showDeleteDialog() {
+        Log.d("NoteGalleryFragment", "showdialog")
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         builder
             .setMessage("Are you sure you want to delete this note")
             .setTitle("Delete")
             .setPositiveButton("Yes") { _, _ ->
-                viewModel.action(NoteGalleryViewModel.NoteGalleryAction.DeleteNote.Confirm)
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm)
             }
             .setNegativeButton("cancel") { _, _ ->
-                viewModel.action(NoteGalleryViewModel.NoteGalleryAction.DeleteNote.Dismiss)
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Dismiss)
             }
         val dialog: AlertDialog = builder.create()
         dialog.show()
