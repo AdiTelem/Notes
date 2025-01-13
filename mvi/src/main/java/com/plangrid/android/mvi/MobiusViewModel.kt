@@ -32,7 +32,7 @@ abstract class MobiusViewModel<Action : Any, Effect : Any, State : Any, RenderDa
 constructor(
     override val initialState: State,
     override val initialEffects: Set<Effect> = emptySet(),
-    override val updater: Updater<State, Action, Effect, Event>,
+    override val updater: NextUpdater<State, Action, Effect, Event>,
     override val processor: Processor<Effect, Action>? = null,
     final override val stateMapper: StateMapper<State, RenderData> = { state: State ->
         @Suppress("UNCHECKED_CAST")

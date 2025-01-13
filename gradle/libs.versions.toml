@@ -18,10 +18,14 @@ navigationFragment = "2.8.5"
 navigationUiKtx = "2.8.5"
 room = "2.6.1"
 roomCompiler = "2.6.1"
+rxjava2 = "2.2.11"
+rxandroid2 = "2.1.1"
 rxjava3 = "3.1.5"
-rxandroid = "3.0.0"
+rxandroid3 = "3.0.0"
 ksp = "1.9.0-1.0.12"
 dagger = "2.54"
+rxrelay2 = "2.1.1"
+litertSupportApi = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,8 +67,12 @@ androidx-room-compiler-v250 = { module = "androidx.room:room-compiler", version.
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 #rxjava
-rxjava3-core = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava3" }
-rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxandroid" }
+rxjava2 = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava2" }
+rxandroid2 = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid2" }
+rxjava3-core = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava3" }
+rxandroid3 = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid3" }
+
+rxrelay2 = { module = "com.jakewharton.rxrelay2:rxrelay", version.ref = "rxrelay2" }
 
 # Room x RX
 room-rxjava3 = {group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
@@ -72,6 +80,7 @@ room-rxjava3 = {group = "androidx.room", name = "room-rxjava3", version.ref = "r
 # dagger
 dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+litert-support-api = { group = "com.google.ai.edge.litert", name = "litert-support-api", version.ref = "litertSupportApi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.litert.support.api)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,10 +86,13 @@ dependencies {
     ksp(libs.androidx.room.compiler.v250)
     implementation(libs.room.ktx)
     implementation(libs.rxjava3.core)
-    implementation(libs.rxandroid)
+    implementation(libs.rxandroid3)
     implementation(libs.room.rxjava3)
     implementation(libs.dagger.core)
     ksp(libs.dagger.compiler)
 
     implementation(project(":mvi"))
+    implementation(libs.rxjava2)
+    implementation(libs.rxandroid2)
+    implementation(libs.rxrelay2)
 }
