@@ -105,10 +105,9 @@ class NoteGalleryFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
 
-        Thread.sleep(100)
         compositeDisposable.clear()
     }
 

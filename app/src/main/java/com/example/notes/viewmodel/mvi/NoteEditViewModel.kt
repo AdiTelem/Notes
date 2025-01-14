@@ -12,9 +12,14 @@ import com.example.notes.NotesApplication
 import com.example.notes.model.NoteData
 import com.example.notes.model.SharedPref
 import com.example.notes.model.repository.rxjava.NoteRepositoryRXJ
+import com.plangrid.android.mvi.StateMapper
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -27,7 +32,7 @@ class NoteEditViewModel constructor(
         NoteEditViewModel.Action,
         NoteEditViewModel.Effect,
         NoteEditViewModel.State,
-        NoteEditViewModel.State,
+        NoteEditViewModel.RenderData,
         NoteEditViewModel.Event
         > (
     initialState = State.emptyState(),
@@ -35,7 +40,8 @@ class NoteEditViewModel constructor(
     initialEffects = emptySet(),
     uiScheduler = uiScheduler,
     effectsScheduler = effectsScheduler,
-    processor = processor
+    processor = processor,
+    stateMapper = GalleryStateMapper
 ) {
 
     class Factory @Inject constructor(
@@ -171,6 +177,7 @@ class NoteEditViewModel constructor(
         }
 
         private fun updateNote(noteData: NoteData) {
+            noteData.updateTime()
             repositoryRXJ.updateNote(noteData).blockingAwait()
         }
 
@@ -223,6 +230,22 @@ class NoteEditViewModel constructor(
             fun emptyState() = State(
                 noteData = NoteData.EmptyNote()
             )
+        }
+    }
+
+    data class RenderData(
+        val noteTitle: String,
+        val noteContent: String,
+        val noteDate: String
+    )
+
+    object GalleryStateMapper : StateMapper<State, RenderData> {
+        override fun invoke(state: State): RenderData {
+            val date = Date(state.noteData.createTime)
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val formattedDate = formatter.format(date)
+
+            return RenderData(state.noteData.title, state.noteData.content, formattedDate)
         }
     }
 

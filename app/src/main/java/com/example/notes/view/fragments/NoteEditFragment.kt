@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -44,16 +45,21 @@ class NoteEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val titleEditText = view.findViewById<EditText>(R.id.titleEditText)
         val contentEditText = view.findViewById<EditText>(R.id.contentEditText)
+        val lastEditDate = view.findViewById<TextView>(R.id.lastEditedDate)
 
         compositeDisposable.add(
             viewModel.renderableStream
-                .subscribe { state ->
-                    if (titleEditText.text.toString() != state.data.noteData.title) {
-                        titleEditText.setText(state.data.noteData.title)
+                .subscribe { data ->
+                    if (titleEditText.text.toString() != data.data.noteTitle) {
+                        titleEditText.setText(data.data.noteTitle)
                     }
 
-                    if (contentEditText.text.toString() != state.data.noteData.content) {
-                        contentEditText.setText(state.data.noteData.content)
+                    if (contentEditText.text.toString() != data.data.noteContent) {
+                        contentEditText.setText(data.data.noteContent)
+                    }
+
+                    if (lastEditDate.text.toString() != data.data.noteDate) {
+                        lastEditDate.text = data.data.noteDate
                     }
                 }
         )
