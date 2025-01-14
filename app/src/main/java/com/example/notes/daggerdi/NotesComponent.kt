@@ -1,9 +1,11 @@
 package com.example.notes.daggerdi
 
 import com.example.notes.MainActivity
+import com.example.notes.view.fragments.NoteEditFragment
 import com.example.notes.view.fragments.NoteGalleryFragment
 import com.example.notes.viewmodel.fragments.NotesEditViewModel
 import com.example.notes.viewmodel.fragments.NotesGalleryViewModel
+import com.example.notes.viewmodel.mvi.NoteEditViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -14,4 +16,5 @@ interface NotesComponent {
     fun inject(notesGalleryViewModel: NotesGalleryViewModel)
 
     fun inject(noteGalleryFragment: NoteGalleryFragment)
+    fun inject(noteEditViewModel: NoteEditFragment)
 }

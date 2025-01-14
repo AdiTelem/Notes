@@ -2,17 +2,24 @@ package com.example.notes.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.notes.view.Note
 
 @Entity(tableName = "notes")
 data class NoteData (
     val title: String,
     val content: String,
     @PrimaryKey var id: Int,
-    val createTime: Long = System.currentTimeMillis()
+    var createTime: Long = System.currentTimeMillis()
 ) {
+    fun updateTime() {
+        createTime = System.currentTimeMillis()
+    }
+
     companion object {
-        val emptyNote = NoteData(
+        fun EmptyNote() : NoteData {
+            return emptyNote.copy()
+        }
+
+        private val emptyNote = NoteData(
             title = "",
             content = "",
             id = 0,
