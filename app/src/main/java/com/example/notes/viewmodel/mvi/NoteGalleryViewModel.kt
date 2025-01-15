@@ -67,10 +67,6 @@ class NoteGalleryViewModel constructor(
                     currentState
                 }
 
-                is Action.DeleteNote.Dismiss -> {
-                    currentState
-                }
-
                 is Action.DeleteNote.Deleted -> {
                     currentState.copy(
                         notes = currentState.notes.filter { it.id != action.note.id }
@@ -169,7 +165,6 @@ class NoteGalleryViewModel constructor(
         sealed class DeleteNote : Action() {
             data class Select(val note: NoteData) : DeleteNote()
             data class Confirm(val noteId: Int) : DeleteNote()
-            data object Dismiss : DeleteNote()
             data class Deleted(val note: NoteData) : DeleteNote()
         }
         data object SyncList : Action()
