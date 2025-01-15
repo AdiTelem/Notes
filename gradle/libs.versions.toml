@@ -82,8 +82,11 @@ dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dag
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 litert-support-api = { group = "com.google.ai.edge.litert", name = "litert-support-api", version.ref = "litertSupportApi" }
 
+safe-args = {group = "androidx.navigation:navigation-safe-args-gradle-plugin", name = "safeargs", version.ref = "navigationUiKtx"}
+
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-
+navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationUiKtx" }
