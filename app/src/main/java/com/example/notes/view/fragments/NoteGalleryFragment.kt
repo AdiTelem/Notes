@@ -27,7 +27,7 @@ class NoteGalleryFragment : Fragment() {
 
     @Inject
     lateinit var factory: NoteGalleryViewModel.Factory
-    val viewModel: NoteGalleryViewModel by viewModels { factory }
+    private val viewModel: NoteGalleryViewModel by viewModels { factory }
 
     private val adapter = NoteAdapter( object : NoteAdapterCallbacks {
         override val onNoteClick: (NoteData) -> Unit = { noteData ->

@@ -62,7 +62,6 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 
 #room db
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-compiler-v250 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
@@ -82,7 +81,6 @@ dagger-core = { group = "com.google.dagger", name = "dagger", version.ref = "dag
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 litert-support-api = { group = "com.google.ai.edge.litert", name = "litert-support-api", version.ref = "litertSupportApi" }
 
-safe-args = {group = "androidx.navigation:navigation-safe-args-gradle-plugin", name = "safeargs", version.ref = "navigationUiKtx"}
 
 
 [plugins]
