@@ -54,25 +54,17 @@ class NoteGalleryViewModel constructor(
         private fun Next.Builder<State, Effect, Event>.deletions(action: Action.DeleteNote) : State {
             return when (action) {
                 is Action.DeleteNote.Select -> {
-                    currentState.copy(
-                        selectedNote = action.note,
-                        isDeleteDialogShown = true
-                    )
+                    addEvent(Event.ShowDialog(action.note))
+                    currentState
                 }
 
                 is Action.DeleteNote.Confirm -> {
-                    addEffect(Effect.DeleteNote(currentState.selectedNote))
-                    currentState.copy(
-                        selectedNote = NoteData.EmptyNote(),
-                        isDeleteDialogShown = false
-                    )
+                    addEffect(Effect.DeleteNote(action.note))
+                    currentState
                 }
 
                 is Action.DeleteNote.Dismiss -> {
-                    currentState.copy(
-                        selectedNote = NoteData.EmptyNote(),
-                        isDeleteDialogShown = false
-                    )
+                    currentState
                 }
 
                 is Action.DeleteNote.Deleted -> {
@@ -172,7 +164,7 @@ class NoteGalleryViewModel constructor(
         }
         sealed class DeleteNote : Action() {
             data class Select(val note: NoteData) : DeleteNote()
-            data object Confirm : DeleteNote()
+            data class Confirm(val note: NoteData) : DeleteNote()
             data object Dismiss : DeleteNote()
             data class Deleted(val note: NoteData) : DeleteNote()
         }
@@ -185,18 +177,15 @@ class NoteGalleryViewModel constructor(
             data class Edit(val id: Int) : ToDetails()
             data object New : ToDetails()
         }
+        data class ShowDialog(val noteData: NoteData) : Event()
     }
 
     data class State(
         val notes: List<NoteData>,
-        val selectedNote: NoteData,
-        val isDeleteDialogShown: Boolean
     ) {
         companion object {
             fun emptyState() = State(
-                notes = mutableListOf(),
-                selectedNote = NoteData.EmptyNote(),
-                isDeleteDialogShown = false
+                notes = mutableListOf()
             )
         }
     }

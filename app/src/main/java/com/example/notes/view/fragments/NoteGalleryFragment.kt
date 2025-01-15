@@ -59,10 +59,6 @@ class NoteGalleryFragment : Fragment() {
             viewModel.renderableStream
                 .subscribe { state ->
                     adapter.submitList(state.data.notes)
-
-                    if (state.data.isDeleteDialogShown) {
-                        showDeleteDialog()
-                    }
                 }
         )
 
@@ -79,6 +75,10 @@ class NoteGalleryFragment : Fragment() {
                         val bundle = Bundle()
                         bundle.putInt("note_id", event.id)
                         findNavController().navigate(R.id.start_to_edit, bundle)
+                    }
+
+                    is NoteGalleryViewModel.Event.ShowDialog -> {
+                        showDeleteDialog(event.noteData)
                     }
                 }
             }
@@ -111,14 +111,14 @@ class NoteGalleryFragment : Fragment() {
         compositeDisposable.clear()
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteDialog(noteData: NoteData) {
         Log.d("NoteGalleryFragment", "showdialog")
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         builder
             .setMessage("Are you sure you want to delete this note")
             .setTitle("Delete")
             .setPositiveButton("Yes") { _, _ ->
-                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm)
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm(noteData))
             }
             .setNegativeButton("cancel") { _, _ ->
                 viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Dismiss)
