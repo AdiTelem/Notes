@@ -1,6 +1,7 @@
 package com.example.notes.daggerdi
 
 import com.example.notes.MainActivity
+import com.example.notes.view.fragments.DeleteDialogFragment
 import com.example.notes.view.fragments.NoteEditFragment
 import com.example.notes.view.fragments.NoteGalleryFragment
 import com.example.notes.viewmodel.fragments.NotesEditViewModel
@@ -17,4 +18,5 @@ interface NotesComponent {
 
     fun inject(noteGalleryFragment: NoteGalleryFragment)
     fun inject(noteEditViewModel: NoteEditFragment)
+    fun inject(deleteDialogFragment: DeleteDialogFragment)
 }

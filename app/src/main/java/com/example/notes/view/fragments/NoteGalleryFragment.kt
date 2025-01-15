@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -107,23 +108,16 @@ class NoteGalleryFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-
         compositeDisposable.clear()
     }
 
     private fun showDeleteDialog(noteData: NoteData) {
-        Log.d("NoteGalleryFragment", "showdialog")
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder
-            .setMessage("Are you sure you want to delete this note")
-            .setTitle("Delete")
-            .setPositiveButton("Yes") { _, _ ->
-                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm(noteData))
+        val action = NoteGalleryFragmentDirections.deleteDialog()
+        findNavController().navigate(action)
+        setFragmentResultListener("refreshKey") { _, bundle ->
+            if (bundle.getBoolean(DeleteDialogFragment.IS_CONFIRMED_KEY)) {
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm(noteData.id))
             }
-            .setNegativeButton("cancel") { _, _ ->
-                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Dismiss)
-            }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
+        }
     }
 }

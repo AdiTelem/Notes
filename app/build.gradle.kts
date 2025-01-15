@@ -1,9 +1,11 @@
 import com.android.build.gradle.internal.utils.isKotlinKaptPluginApplied
+import org.jetbrains.kotlin.fir.declarations.builder.buildScript
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.navigation.safe.args)
 }
 
 android {
@@ -44,11 +46,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 

@@ -59,11 +59,11 @@ class NoteGalleryViewModel constructor(
                 }
 
                 is Action.DeleteNote.Confirm -> {
-                    addEffect(Effect.DeleteNote(action.note))
-                    currentState
-                }
-
-                is Action.DeleteNote.Dismiss -> {
+                    currentState.notes.forEach { note ->
+                        if (note.id == action.noteId) {
+                            addEffect(Effect.DeleteNote(note))
+                        }
+                    }
                     currentState
                 }
 
@@ -81,7 +81,7 @@ class NoteGalleryViewModel constructor(
                     addEvent(Event.ToDetails.New)
                 }
                 is Action.ToDetails.Edit -> {
-                    addEvent(Event.ToDetails.Edit(action.id))
+                    addEvent(Event.ToDetails.Edit(action.noteId))
                 }
             }
 
@@ -159,13 +159,12 @@ class NoteGalleryViewModel constructor(
 
     sealed class Action {
         sealed class ToDetails : Action() {
-            data class Edit(val id: Int) : ToDetails()
+            data class Edit(val noteId: Int) : ToDetails()
             data object New : ToDetails()
         }
         sealed class DeleteNote : Action() {
             data class Select(val note: NoteData) : DeleteNote()
-            data class Confirm(val note: NoteData) : DeleteNote()
-            data object Dismiss : DeleteNote()
+            data class Confirm(val noteId: Int) : DeleteNote()
             data class Deleted(val note: NoteData) : DeleteNote()
         }
         data object SyncList : Action()

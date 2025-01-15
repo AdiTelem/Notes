@@ -13,6 +13,9 @@
         <action
             android:id="@+id/start_to_edit"
             app:destination="@id/note_edit" />
+        <action
+            android:id="@+id/delete_dialog"
+            app:destination="@id/deleteDialogFragment" />
     </fragment>
 
     <fragment
@@ -20,5 +23,11 @@
         android:name="com.example.notes.view.fragments.NoteEditFragment"
         android:label="NoteEdit"
         tools:layout="@layout/fragment_note_edit" />
+
+    <dialog
+        android:id="@+id/deleteDialogFragment"
+        android:name="com.example.notes.view.fragments.DeleteDialogFragment"
+        android:label="DeleteDialog">
+    </dialog>
 
 </navigation>
