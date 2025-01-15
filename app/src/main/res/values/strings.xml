@@ -12,4 +12,5 @@
     <string name="edit_title_hint">Title</string>
     <string name="edit_content_hint">Write something...</string>
     <string name="fab_description">newNote</string>
+    <string name="editScreenTopTitle">Last Edited:</string>
 </resources>

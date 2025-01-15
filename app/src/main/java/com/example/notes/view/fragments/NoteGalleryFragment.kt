@@ -13,17 +13,31 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notes.R
 import com.example.notes.model.NoteAdapter
-import com.example.notes.viewmodel.fragments.NotesGalleryViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import com.example.notes.viewmodel.mvi.NoteGalleryViewModel
+import com.example.notes.NotesApplication
 import com.example.notes.model.NoteAdapterCallbacks
 import com.example.notes.model.NoteData
-import com.example.notes.viewmodel.fragments.NotesEditViewModel
+import io.reactivex.disposables.CompositeDisposable
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 
 class NoteGalleryFragment : Fragment() {
-    private val viewModel: NotesGalleryViewModel by viewModels { NotesGalleryViewModel.Factory }
+
+    @Inject
+    lateinit var factory: NoteGalleryViewModel.Factory
+    private val viewModel: NoteGalleryViewModel by viewModels { factory }
+
+    private val adapter = NoteAdapter( object : NoteAdapterCallbacks {
+        override val onNoteClick: (NoteData) -> Unit = { noteData ->
+            viewModel.action(NoteGalleryViewModel.Action.ToDetails.Edit(noteData.id))
+        }
+        override val onNoteLongClick: (NoteData) -> Unit = { noteData ->
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Select(noteData))
+        }
+    })
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,60 +47,81 @@ class NoteGalleryFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_note_gallery, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.isDeleteDialogShown.value?.let {
-            if (it) {
-                showDeleteDialog()
-            }
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        this.activity?.let { (it.application as NotesApplication).notesComponent.inject(this) }
+        super.onCreate(savedInstanceState)
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        compositeDisposable.add(
+            viewModel.renderableStream
+                .subscribe { state ->
+                    adapter.submitList(state.data.notes)
+                }
+        )
+
+        compositeDisposable.add(
+            viewModel.eventRelay.
+            subscribe { event ->
+                when (event) {
+                    is NoteGalleryViewModel.Event.ToDetails.New -> {
+                        val bundle = Bundle()
+                        bundle.putInt("note_id", 0)
+                        findNavController().navigate(R.id.start_to_edit, bundle)
+                    }
+                    is NoteGalleryViewModel.Event.ToDetails.Edit -> {
+                        val bundle = Bundle()
+                        bundle.putInt("note_id", event.id)
+                        findNavController().navigate(R.id.start_to_edit, bundle)
+                    }
+
+                    is NoteGalleryViewModel.Event.ShowDialog -> {
+                        showDeleteDialog(event.noteData)
+                    }
+                }
+            }
+        )
+
+        viewModel.action(NoteGalleryViewModel.Action.SyncList)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //recycler view
         val recyclerView = view.findViewById<RecyclerView>(R.id.noteList)
-        val adapter = NoteAdapter ( object : NoteAdapterCallbacks {
-            override val onNoteClick: (NoteData) -> Unit = { noteData ->
-                val bundle = Bundle()
-                bundle.putInt("note_id", noteData.id)
-                findNavController().navigate(R.id.start_to_edit, bundle)
-            }
-            override val onNoteLongClick: (NoteData) -> Unit = { noteData ->
-                viewModel.showDeleteDialog(noteData)
-                showDeleteDialog()
-            }
-        })
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
 
         // buttons
         val refreshButton = view.findViewById<Button>(R.id.refresh_button)
         refreshButton.setOnClickListener {
-            viewModel.onRefresh()
+            viewModel.action(NoteGalleryViewModel.Action.SyncList)
         }
 
         val fAB = view.findViewById<FloatingActionButton>(R.id.fab)
         fAB.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("note_id", 0)
-            findNavController().navigate(R.id.start_to_edit, bundle)
+            viewModel.action(NoteGalleryViewModel.Action.ToDetails.New)
         }
-
-        viewModel.notes.observe(viewLifecycleOwner) { noteList ->
-            adapter.submitList(noteList)
-        }
-
-        viewModel.readAllNotes()
     }
 
-    private fun showDeleteDialog() {
+    override fun onPause() {
+        super.onPause()
+
+        compositeDisposable.clear()
+    }
+
+    private fun showDeleteDialog(noteData: NoteData) {
+        Log.d("NoteGalleryFragment", "showdialog")
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         builder
             .setMessage("Are you sure you want to delete this note")
             .setTitle("Delete")
-            .setPositiveButton("Yes") { dialog, which ->
-                viewModel.deleteSelectedNote()
-                viewModel.hideDeleteDialog()
+            .setPositiveButton("Yes") { _, _ ->
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Confirm(noteData))
             }
-            .setNegativeButton("cancel") { dialog, which ->
-                viewModel.hideDeleteDialog()
+            .setNegativeButton("cancel") { _, _ ->
+                viewModel.action(NoteGalleryViewModel.Action.DeleteNote.Dismiss)
             }
         val dialog: AlertDialog = builder.create()
         dialog.show()
